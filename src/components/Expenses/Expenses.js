@@ -1,13 +1,54 @@
-import './Expenses.css';
+import React, { useState } from 'react';
+
 import ExpenseItem from './ExpenseItem';
 import Card from '../UI/Card';
+import ExpensesFilter from './ExpenseFilter';
+import './Expenses.css';
+
 const Expenses = (props) => {
+    const [filteredYear, setFilteredYear] = useState('2022');
+
+    const filterChangeHandler = (selectedYear) => {
+        setFilteredYear(selectedYear);
+    };
+
+    const filteredExpenses = props.items.filter(expense => {
+        return expense.date.getFullYear().toString() === filteredYear;
+    });
+
+    let expensesContent = filteredExpenses.map((expense) => (
+        <ExpenseItem
+            key={expense.id}
+            title={expense.title}
+            amount={expense.amount}
+            date={expense.date}
+        />
+    ))
+
     return (
-        <Card className="expenses">
-            <ExpenseItem title={props.expenses[0].title} date={props.expenses[0].date} amount={props.expenses[0].amount} />
-            <ExpenseItem title={props.expenses[1].title} date={props.expenses[1].date} amount={props.expenses[1].amount} />
-        </Card>
+        <div>
+            <Card className='expenses'>
+                <ExpensesFilter
+                    selected={filteredYear}
+                    onChangeFilter={filterChangeHandler}
+                />
+                {/* this is smarter way to add conditional expression instead of terniary operator */}
+                {/* {filteredExpenses.length === 0 && <p>No expense found</p>}
+                {filteredExpenses.length > 0 && filteredExpenses.map((expense) => (
+                    <ExpenseItem
+                        key={expense.id}
+                        title={expense.title}
+                        amount={expense.amount}
+                        date={expense.date}
+                    />
+                ))
+                } */
+                    expensesContent
+                }
+
+            </Card>
+        </div>
     );
-}
+};
 
 export default Expenses;
